@@ -1,0 +1,18 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Issue 确认报告</title><link rel="stylesheet" href="/static/report.css"></head>
+<body><main class="shell">
+  <nav><a href="/admin/tasks.html">← 返回任务列表</a><span>AI ISSUE CHECKER</span></nav>
+  <header><div><p class="eyebrow">POLYSPACE VERIFICATION REPORT</p><h1 id="title">确认报告</h1><p id="subtitle"></p></div><span id="status" class="status"></span></header>
+  <div id="error" class="error hidden"></div>
+  <section class="overview">
+    <article class="progress-card"><div class="section-title">审核进度 <strong id="progressText">0%</strong></div><div class="bar"><i id="progressBar"></i></div><div id="progressDetail" class="muted"></div></article>
+    <article><div class="section-title">状态</div><strong id="completionStatus">—</strong><p id="failure" class="failure"></p></article>
+  </section>
+  <h2>汇总信息</h2><section id="summary" class="stats"></section>
+  <h2>审核数据</h2><section id="metrics" class="stats metrics"></section>
+  <section class="files-head"><div><h2>文件与问题</h2><p class="muted">按负责人筛选，展开文件可查看完整 issue 列表。</p></div><label>负责人<select id="author"><option value="">全部负责人</option></select></label></section>
+  <section id="files" class="files"></section>
+  <div class="pagination"><button id="prev">上一页</button><span id="pageInfo"></span><button id="next">下一页</button></div>
+</main>
+<div id="modal" class="modal hidden"><div class="modal-panel"><div class="modal-head"><div><strong id="codeTitle"></strong><span id="codeMeta"></span></div><button id="close">关闭</button></div><pre id="code"></pre></div></div>
+<script src="/static/report.js"></script></body></html>
+

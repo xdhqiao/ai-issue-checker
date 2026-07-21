@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Polyspace Issue 确认任务</title><link rel="stylesheet" href="/static/admin_tasks.css"></head>
+<body>
+<main class="shell">
+  <header><div><p class="eyebrow">AI ISSUE CHECKER</p><h1>Polyspace Issue 确认任务</h1><p>检索每次扫描版本，跟踪二次确认状态与问题规模。</p></div><button id="refresh">刷新</button></header>
+  <section class="filters">
+    <label>项目<input id="project" placeholder="project_id"></label>
+    <label>版本<input id="version" placeholder="review_version"></label>
+    <label>开始日期<input id="dateFrom" type="datetime-local"></label>
+    <label>结束日期<input id="dateTo" type="datetime-local"></label>
+    <label>任务种类<select id="taskType"><option value="">全部</option><option value="1">Polyspace 确认</option></select></label>
+    <label>状态<select id="state"><option value="">全部</option><option value="0">待执行</option><option value="1">执行中</option><option value="2">已完成</option><option value="3">失败</option></select></label>
+    <button id="search" class="primary">搜索</button><button id="reset">重置</button>
+  </section>
+  <section class="table-card">
+    <div class="table-meta"><span id="total">0 个任务</span><span>每页 20 条</span></div>
+    <div class="table-wrap"><table><thead><tr>
+      <th><button data-sort="project_id">项目 ID</button></th><th><button data-sort="review_version">当前版本</button></th>
+      <th><button data-sort="task_type">任务种类</button></th><th><button data-sort="state">任务状态</button></th>
+      <th><button data-sort="red_issue_num">红色问题数</button></th><th><button data-sort="issue_num">问题总数</button></th>
+      <th><button data-sort="create_time">创建时间</button></th>
+    </tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="pagination"><button id="prev">上一页</button><span id="pageInfo">1 / 1</span><button id="next">下一页</button></div>
+  </section>
+</main><script src="/static/admin_tasks.js"></script>
+</body></html>
+
