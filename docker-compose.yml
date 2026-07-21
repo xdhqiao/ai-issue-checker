@@ -20,6 +20,15 @@ services:
       MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/ai_issue_checker}
       MONGODB_DB: ${MONGODB_DB:-ai_issue_checker}
       CODE_REPOSITORY_ROOT: ${CODE_REPOSITORY_ROOT:-/ShareData}
+      LLM_URL: ${LLM_URL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-deepseek-v4-flash}
+      LLM_FALLBACK_MODEL: ${LLM_FALLBACK_MODEL:-deepseek-v4-flash}
+      LLM_MOCK_ENABLED: ${LLM_MOCK_ENABLED:-true}
+      LLM_TIMEOUT_SECONDS: ${LLM_TIMEOUT_SECONDS:-120}
+      LLM_FILE_TIMEOUT_SECONDS: ${LLM_FILE_TIMEOUT_SECONDS:-600}
+      LLM_MAX_TOOL_ROUNDS: ${LLM_MAX_TOOL_ROUNDS:-30}
+      FILE_CONCURRENCY: ${FILE_CONCURRENCY:-4}
     ports:
       - "${APP_HOST_PORT:-8000}:8000"
     volumes:

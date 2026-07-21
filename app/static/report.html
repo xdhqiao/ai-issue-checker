@@ -1,18 +1,79 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Issue 确认报告</title><link rel="stylesheet" href="/static/report.css"></head>
-<body><main class="shell">
-  <nav><a href="/admin/tasks.html">← 返回任务列表</a><span>AI ISSUE CHECKER</span></nav>
-  <header><div><p class="eyebrow">POLYSPACE VERIFICATION REPORT</p><h1 id="title">确认报告</h1><p id="subtitle"></p></div><span id="status" class="status"></span></header>
-  <div id="error" class="error hidden"></div>
-  <section class="overview">
-    <article class="progress-card"><div class="section-title">审核进度 <strong id="progressText">0%</strong></div><div class="bar"><i id="progressBar"></i></div><div id="progressDetail" class="muted"></div></article>
-    <article><div class="section-title">状态</div><strong id="completionStatus">—</strong><p id="failure" class="failure"></p></article>
-  </section>
-  <h2>汇总信息</h2><section id="summary" class="stats"></section>
-  <h2>审核数据</h2><section id="metrics" class="stats metrics"></section>
-  <section class="files-head"><div><h2>文件与问题</h2><p class="muted">按负责人筛选，展开文件可查看完整 issue 列表。</p></div><label>负责人<select id="author"><option value="">全部负责人</option></select></label></section>
-  <section id="files" class="files"></section>
-  <div class="pagination"><button id="prev">上一页</button><span id="pageInfo"></span><button id="next">下一页</button></div>
-</main>
-<div id="modal" class="modal hidden"><div class="modal-panel"><div class="modal-head"><div><strong id="codeTitle"></strong><span id="codeMeta"></span></div><button id="close">关闭</button></div><pre id="code"></pre></div></div>
-<script src="/static/report.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Polyspace Issue 确认报告</title>
+  <link rel="stylesheet" href="/static/report.css?v=20260721-style2">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div>
+        <p class="eyebrow">POLYSPACE VERIFICATION REPORT</p>
+        <h1 id="title">Issue 确认报告</h1>
+        <p id="subtitle" class="header-meta"></p>
+      </div>
+      <div class="topbar-actions">
+        <a class="admin-link" href="/admin/tasks.html">返回任务列表</a>
+        <span id="status" class="status pending">加载中</span>
+      </div>
+    </div>
+  </header>
 
+  <main class="shell">
+    <div id="error" class="error-state hidden"></div>
+
+    <section class="overview-band" aria-labelledby="overview-title">
+      <h2 id="overview-title" class="section-title">审核概览</h2>
+      <div class="overview-grid">
+        <dl class="datum"><dt>审核项目</dt><dd id="overviewProject">--</dd></dl>
+        <dl class="datum"><dt>审核版本</dt><dd id="overviewVersion">--</dd></dl>
+        <dl class="datum"><dt>任务种类</dt><dd id="overviewType">Polyspace Issue 确认</dd></dl>
+        <dl class="datum"><dt>创建时间</dt><dd id="overviewCreated">--</dd></dl>
+        <dl class="datum"><dt>确认状态</dt><dd id="overviewStatus">--</dd></dl>
+      </div>
+    </section>
+
+    <section class="progress-band" aria-labelledby="progress-title">
+      <div class="section-heading progress-heading">
+        <div><p class="eyebrow">LIVE PROGRESS</p><h2 id="progress-title" class="section-title">审核进度</h2></div>
+        <strong id="completionStatus" class="completion-label">--</strong>
+      </div>
+      <div class="progress-summary">
+        <strong id="progressText">0%</strong>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"><span id="progressBar"></span></div>
+      </div>
+      <div id="progressDetail" class="progress-details"></div>
+      <p id="failure" class="failure"></p>
+    </section>
+
+    <section class="summary-band" aria-labelledby="summary-title">
+      <h2 id="summary-title" class="section-title">汇总信息</h2>
+      <div id="summary" class="metric-grid summary-grid"></div>
+    </section>
+
+    <section class="metric-band" aria-labelledby="metric-title">
+      <h2 id="metric-title" class="section-title">审核数据</h2>
+      <div id="metrics" class="metric-grid"></div>
+    </section>
+
+    <section class="files-band" aria-labelledby="files-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">FILES</p><h2 id="files-title" class="section-title">文件与问题</h2><p class="muted section-copy">按负责人筛选，文件内展示完整 Issue 列表。</p></div>
+        <label class="author-control"><span>负责人</span><select id="author"><option value="">全部负责人</option></select></label>
+      </div>
+      <div id="files"></div>
+      <nav class="pagination" aria-label="文件列表分页"><button id="prev" type="button">上一页</button><span id="pageInfo" class="page-summary"></span><button id="next" type="button">下一页</button></nav>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="codeTitle">
+    <div class="modal-panel">
+      <div class="modal-head"><div><strong id="codeTitle"></strong><span id="codeMeta"></span></div><button id="close" class="button-secondary" type="button">关闭</button></div>
+      <pre id="code"></pre>
+    </div>
+  </div>
+  <script src="/static/report.js?v=20260721-style2" defer></script>
+</body>
+</html>

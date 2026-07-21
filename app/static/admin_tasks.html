@@ -1,28 +1,66 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Polyspace Issue 确认任务</title><link rel="stylesheet" href="/static/admin_tasks.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Polyspace Issue 确认任务管理</title>
+  <link rel="stylesheet" href="/static/admin_tasks.css?v=20260721-style2">
+</head>
 <body>
-<main class="shell">
-  <header><div><p class="eyebrow">AI ISSUE CHECKER</p><h1>Polyspace Issue 确认任务</h1><p>检索每次扫描版本，跟踪二次确认状态与问题规模。</p></div><button id="refresh">刷新</button></header>
-  <section class="filters">
-    <label>项目<input id="project" placeholder="project_id"></label>
-    <label>版本<input id="version" placeholder="review_version"></label>
-    <label>开始日期<input id="dateFrom" type="datetime-local"></label>
-    <label>结束日期<input id="dateTo" type="datetime-local"></label>
-    <label>任务种类<select id="taskType"><option value="">全部</option><option value="1">Polyspace 确认</option></select></label>
-    <label>状态<select id="state"><option value="">全部</option><option value="0">待执行</option><option value="1">执行中</option><option value="2">已完成</option><option value="3">失败</option></select></label>
-    <button id="search" class="primary">搜索</button><button id="reset">重置</button>
-  </section>
-  <section class="table-card">
-    <div class="table-meta"><span id="total">0 个任务</span><span>每页 20 条</span></div>
-    <div class="table-wrap"><table><thead><tr>
-      <th><button data-sort="project_id">项目 ID</button></th><th><button data-sort="review_version">当前版本</button></th>
-      <th><button data-sort="task_type">任务种类</button></th><th><button data-sort="state">任务状态</button></th>
-      <th><button data-sort="red_issue_num">红色问题数</button></th><th><button data-sort="issue_num">问题总数</button></th>
-      <th><button data-sort="create_time">创建时间</button></th>
-    </tr></thead><tbody id="rows"></tbody></table></div>
-    <div class="pagination"><button id="prev">上一页</button><span id="pageInfo">1 / 1</span><button id="next">下一页</button></div>
-  </section>
-</main><script src="/static/admin_tasks.js"></script>
-</body></html>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div>
+        <p class="eyebrow">AI ISSUE CHECKER ADMIN</p>
+        <h1>Polyspace Issue 确认任务管理</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="refresh" class="text-button" type="button">刷新</button>
+        <span id="total" class="result-summary">正在加载...</span>
+      </div>
+    </div>
+  </header>
 
+  <main class="shell">
+    <section class="filter-band" aria-labelledby="filter-title">
+      <div class="section-heading"><h2 id="filter-title">筛选任务</h2></div>
+      <form id="filter-form">
+        <label><span>项目</span><input id="project" type="search" placeholder="项目 ID" autocomplete="off"></label>
+        <label><span>当前版本</span><input id="version" type="search" placeholder="review_version" autocomplete="off"></label>
+        <label><span>开始日期</span><input id="dateFrom" type="datetime-local"></label>
+        <label><span>结束日期</span><input id="dateTo" type="datetime-local"></label>
+        <label><span>任务种类</span><select id="taskType"><option value="">全部种类</option><option value="1">Polyspace 确认</option></select></label>
+        <label><span>任务状态</span><select id="state"><option value="">全部状态</option><option value="0">待执行</option><option value="1">执行中</option><option value="2">已完成</option><option value="3">失败</option></select></label>
+        <div class="filter-actions">
+          <button id="search" class="button-primary" type="submit">搜索</button>
+          <button id="reset" class="button-secondary" type="button">重置</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="task-band" aria-labelledby="task-list-title">
+      <div class="section-heading list-heading">
+        <div><h2 id="task-list-title">版本列表</h2><p class="muted">默认每页显示 20 条任务</p></div>
+        <span class="muted">点击当前版本查看 Issue 确认报告</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th><button class="sort-button" data-sort="project_id" type="button">项目 ID<span class="sort-indicator"></span></button></th>
+            <th><button class="sort-button" data-sort="review_version" type="button">当前版本<span class="sort-indicator"></span></button></th>
+            <th><button class="sort-button" data-sort="task_type" type="button">任务种类<span class="sort-indicator"></span></button></th>
+            <th><button class="sort-button" data-sort="state" type="button">任务状态<span class="sort-indicator"></span></button></th>
+            <th><button class="sort-button numeric" data-sort="red_issue_num" type="button">红色问题数<span class="sort-indicator"></span></button></th>
+            <th><button class="sort-button numeric" data-sort="issue_num" type="button">问题总数<span class="sort-indicator"></span></button></th>
+            <th><button class="sort-button" data-sort="create_time" type="button">创建时间<span class="sort-indicator"></span></button></th>
+          </tr></thead>
+          <tbody id="rows"><tr class="loading-row"><td colspan="7">正在加载任务列表...</td></tr></tbody>
+        </table>
+      </div>
+      <nav class="pagination" aria-label="任务列表分页">
+        <button id="prev" type="button">上一页</button><span id="pageInfo" class="page-summary">1 / 1</span><button id="next" type="button">下一页</button>
+      </nav>
+    </section>
+  </main>
+  <script src="/static/admin_tasks.js?v=20260721-style2" defer></script>
+</body>
+</html>
