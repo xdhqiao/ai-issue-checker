@@ -27,7 +27,7 @@ APScheduler → ReviewScheduler → ReviewTaskService → file thread pool
                                   ├─ submit_confidences
                                   └─ task_done
 
-Admin / Report pages ← report/admin/source APIs ← MongoDB
+Admin / Author statistics / Report pages ← report/admin/source APIs ← MongoDB
 Completion → same admin + file-owner email recipient strategy as ci-ai-codereview
 ```
 
@@ -58,7 +58,7 @@ app/
   schemas/      API 入参与响应模型
   routes/       task、admin、report、source、health API
   services/     提交、调度、文件验证、LLM、tools、邮件、报表
-  static/       管理任务列表与报告页面
+  static/       管理任务、人员统计/明细与报告页面
   templates/    完成邮件模板
 tests/          API、重复清理、恢复、LLM 输入边界、报告测试
 ```
@@ -77,6 +77,7 @@ docker compose up --build
 
 - API 文档：`http://127.0.0.1:8000/docs`
 - 管理页面：`http://127.0.0.1:8000/admin/tasks.html`
+- 人员统计：`http://127.0.0.1:8000/admin/authors.html`
 - 健康检查：`http://127.0.0.1:8000/health`
 
 ### 本地 Python 3.12
@@ -125,9 +126,13 @@ Content-Type: application/json
 
 - `GET /api/tasks`、`GET /api/tasks/{task_id}`、`DELETE /api/tasks/{task_id}`
 - `GET /api/admin/tasks`：筛选、排序、分页
+- `GET /api/admin/authors`：按日期统计负责人
+- `GET /api/admin/authors/{author}`：按日期、问题等级查看负责人相关项目版本明细
 - `GET /api/reports/tasks/{task_id}`：报告及负责人/文件分页
+- `GET /api/reports/projects/{project_id}/versions/{review_version}`：按项目和版本读取报告
 - `GET /api/code-files/{file_id}/source`：安全读取报告对应源码
-- `GET /reports/{task_id}.html`：报告页面
+- `GET /reports/{project_id}/{review_version}.html`：友好地址报告页面
+- `GET /reports/{task_id}.html`：兼容原任务 ID 报告地址
 
 ## 关键配置
 
@@ -147,4 +152,4 @@ Content-Type: application/json
 pytest
 ```
 
-覆盖健康检查、任务写入与汇总、相同项目版本全量清理、路径穿越拒绝、中断租约恢复、文件检查点、LLM 四字段输入约束、管理筛选、报告和源码读取。
+覆盖健康检查、任务写入与汇总、相同项目版本全量清理、路径穿越拒绝、中断租约恢复、文件检查点、LLM 四字段输入约束、管理筛选、人员维度聚合、友好报告地址、报告和源码读取。

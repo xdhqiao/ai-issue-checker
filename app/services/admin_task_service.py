@@ -1,5 +1,6 @@
 from datetime import datetime
 from math import ceil
+from urllib.parse import quote
 
 from app.common.constants import state_label
 from app.models.task import TaskModel
@@ -48,7 +49,10 @@ class AdminTaskService:
                     red_issue_num=int(task.red_issue_num or 0),
                     issue_num=int(task.issue_num or 0),
                     create_time=task.create_time,
-                    report_path=f"/reports/{task.id}.html",
+                    report_path=(
+                        f"/reports/{quote(task.project_id, safe='')}/"
+                        f"{quote(task.review_version, safe='')}.html"
+                    ),
                 )
                 for task in tasks
             ],
@@ -57,4 +61,3 @@ class AdminTaskService:
             page_size=page_size,
             total_pages=ceil(total / page_size) if total else 0,
         )
-

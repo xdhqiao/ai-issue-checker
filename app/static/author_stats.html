@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>人员问题统计</title>
+  <link rel="stylesheet" href="/static/author_stats.css?v=20260722-3">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div><p class="eyebrow">ISSUE STATISTICS BY OWNER</p><h1>人员问题统计</h1></div>
+      <div class="topbar-actions"><a class="admin-link" href="/admin/tasks.html">任务管理</a><span id="resultSummary" class="muted">正在加载...</span></div>
+    </div>
+  </header>
+  <main class="shell">
+    <section aria-labelledby="scopeTitle">
+      <h2 id="scopeTitle">统计范围</h2>
+      <form id="filterForm" class="filter-form author-overview-filter" autocomplete="off" data-form-type="other">
+        <label><span>开始日期</span><input id="dateFrom" name="statistics_start_date" type="date" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-bwignore="true"></label>
+        <label><span>结束日期</span><input id="dateTo" name="statistics_end_date" type="date" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-bwignore="true"></label>
+        <div class="filter-actions"><button class="button-primary" type="submit">统计</button><button id="reset" class="button-secondary" type="button">重置</button></div>
+      </form>
+    </section>
+    <section aria-labelledby="summaryTitle"><h2 id="summaryTitle">问题汇总</h2><div id="summary" class="metric-grid"></div></section>
+    <section aria-labelledby="listTitle">
+      <div class="section-heading"><div><h2 id="listTitle">负责人列表</h2><p class="muted">点击负责人查看项目和版本明细</p></div></div>
+      <div class="table-scroll"><table><thead><tr><th>负责人</th><th class="numeric">项目数</th><th class="numeric">版本数</th><th class="numeric">红色问题数</th><th class="numeric">橙色问题数</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <nav class="pagination" aria-label="负责人列表分页"><button id="prev" type="button">上一页</button><span id="pageInfo" class="muted">1 / 1</span><button id="next" type="button">下一页</button></nav>
+    </section>
+  </main>
+  <script src="/static/author_date_guard.js?v=20260722-3" defer></script>
+  <script src="/static/author_stats.js?v=20260722-3" defer></script>
+</body>
+</html>

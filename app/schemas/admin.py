@@ -30,3 +30,49 @@ class AdminTaskListResponse(BaseModel):
     page_size: int
     total_pages: int
 
+
+SeverityFilter = Literal["all", "red", "orange"]
+
+
+class AuthorStatsItem(BaseModel):
+    author: str
+    project_num: int
+    version_num: int
+    red_issue_num: int
+    orange_issue_num: int
+    detail_path: str
+
+
+class AuthorStatsResponse(BaseModel):
+    items: list[AuthorStatsItem]
+    project_num: int
+    version_num: int
+    red_issue_num: int
+    orange_issue_num: int
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
+class AuthorVersionItem(BaseModel):
+    task_id: str
+    project_id: str
+    review_version: str
+    red_issue_num: int
+    orange_issue_num: int
+    create_time: datetime
+    report_path: str
+
+
+class AuthorDetailResponse(BaseModel):
+    author: str
+    items: list[AuthorVersionItem]
+    project_num: int
+    version_num: int
+    red_issue_num: int
+    orange_issue_num: int
+    total: int
+    page: int
+    page_size: int
+    total_pages: int

@@ -19,6 +19,23 @@ class TaskReportService:
             raise NotFoundError("Task not found")
         return task
 
+    def find_task_by_project_version(self, project_id: str, review_version: str) -> TaskModel:
+        task = TaskModel.objects(project_id=project_id, review_version=review_version).first()
+        if task is None:
+            raise NotFoundError("Task not found")
+        return task
+
+    def get_report_by_project_version(
+        self,
+        project_id: str,
+        review_version: str,
+        author: str = "",
+        page: int = 1,
+        page_size: int = 20,
+    ) -> TaskReportResponse:
+        task = self.find_task_by_project_version(project_id, review_version)
+        return self.get_report(str(task.id), author=author, page=page, page_size=page_size)
+
     def get_report(self, task_id: str, author: str = "", page: int = 1, page_size: int = 20) -> TaskReportResponse:
         task = self.find_task(task_id)
         all_files = list(CodeFileModel.objects(task_id=str(task.id)).order_by("file_name"))
