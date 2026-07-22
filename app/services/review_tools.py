@@ -23,7 +23,7 @@ class IssueConfirmationToolRunner:
         try:
             if name == "file_find":
                 return self.file_find(arguments)
-            if name in {"read_file", "file_read", "file_read_diff"}:
+            if name in {"read_file", "file_read"}:
                 return self.read_file(arguments)
             if name == "code_search":
                 return self.code_search(arguments)

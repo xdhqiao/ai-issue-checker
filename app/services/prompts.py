@@ -10,14 +10,6 @@ ISSUE_CONFIRMATION_TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "file_read_diff",
-            "description": "Read numbered source lines. Polyspace confirmation has no diff, so this returns source context.",
-            "parameters": {"type": "object", "properties": {"file_path": {"type": "string"}, "start_line": {"type": "integer"}, "end_line": {"type": "integer"}}},
-        },
-    },
-    {
-        "type": "function",
-        "function": {
             "name": "code_search",
             "description": "Search text or a regular expression in repository source files.",
             "parameters": {"type": "object", "properties": {"search_text": {"type": "string"}, "regex": {"type": "boolean"}, "case_sensitive": {"type": "boolean"}, "limit": {"type": "integer"}}, "required": ["search_text"]},

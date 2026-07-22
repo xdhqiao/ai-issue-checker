@@ -62,6 +62,7 @@ def test_llm_receives_only_four_polyspace_fields(payload):
         def chat(self, messages, tools):
             import json
 
+            assert "file_read_diff" not in {tool["function"]["name"] for tool in tools}
             issue = json.loads(messages[1]["content"])["issues"][0]
             assert set(issue) == {"check", "function", "line", "detail"}
             assert "8893" not in messages[1]["content"]
@@ -83,4 +84,3 @@ def test_llm_receives_only_four_polyspace_fields(payload):
     assert result.confidences == [0.82]
     assert result.total_tokens == 12
     assert result.call_count == 1
-
