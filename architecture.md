@@ -81,6 +81,8 @@ ai-issue-checker/
 │  ├─ services/
 │  │  ├─ task_submission.py
 │  │  │  └─ 重复任务清理和新任务落库
+│  │  ├─ task_retry.py
+│  │  │  └─ 自动重试耗尽后的手动续跑，只重置未完成文件
 │  │  ├─ scheduler.py
 │  │  │  └─ 任务轮询、租约、心跳、中断恢复
 │  │  ├─ review_service.py
@@ -269,7 +271,7 @@ APScheduler 默认每 5 秒轮询一次。候选任务包括 `pending`、`runnin
 
 - `pending`：没有有效租约时可以领取。
 - `running`：只有租约已过期才允许重新领取，通常表示应用重启、worker 退出、机器异常或心跳停止。
-- `failed`：必须满足重试次数未耗尽、租约已过期或不存在，并且 `next_retry_time` 已到。
+- `failed`：初次失败后最多自动重试 1 次；必须满足重试次数未耗尽、租约已过期或不存在，并且 `next_retry_time` 已到。
 
 ### 6. 原子领取和租约
 
@@ -285,7 +287,7 @@ heartbeat_time = 当前时间
 last_start_time = 当前时间
 ```
 
-如果另一个 worker 已经修改状态或租约，本次领取失败。执行过程中调度器周期性更新心跳并延长 `lease_expires_at`。
+如果另一个 worker 已经修改状态或租约，本次领取失败。执行过程中调度器周期性更新心跳并延长 `lease_expires_at`。租约不是任务的最大执行时长：只要 worker 正常运行，租约会不断续期；只有心跳停止并超过租约时间，新实例才能接管。
 
 ### 7. 检查代码版本目录
 
@@ -549,9 +551,19 @@ for index, confidence in enumerate(result.confidences):
 所有文件线程结束后，系统重新读取 Task 下全部 CodeFile：
 
 - 全部完成：Task 变为 `completed`，清理失败信息和下次重试时间。
-- 存在未完成文件：Task 变为 `failed`，`retry_count += 1`，并在还有重试次数时设置 `next_retry_time`。
+- 存在未完成文件：Task 变为 `failed`，`retry_count += 1`。第一次失败后设置 `next_retry_time` 并自动重试一次；再次失败后不再自动重试，保留失败状态和“继续确认”按钮。
 
 下一次调度只处理未完成文件，已完成文件作为检查点保留。
+
+### 手动继续确认
+
+自动重试一次后仍失败的任务，可以调用：
+
+```http
+POST /api/tasks/{task_id}/retry
+```
+
+管理页面会在对应失败任务的操作列显示“继续确认”。手动续跑会保留 completed 文件及其 confidence，只把 failed、pending 或遗留 running 文件恢复为 pending。手动续跑不清零历史 `retry_count`；如果再次失败，任务继续展示失败和按钮，不会重新进入无限自动重试。
 
 ## 八、部署中断如何恢复
 

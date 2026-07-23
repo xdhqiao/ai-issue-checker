@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Polyspace Issue 确认任务管理</title>
-  <link rel="stylesheet" href="/static/admin_tasks.css?v=20260721-style2">
+  <link rel="stylesheet" href="/static/admin_tasks.css?v=20260723-retry1">
 </head>
 <body>
   <header class="topbar">
@@ -53,8 +53,9 @@
             <th><button class="sort-button numeric" data-sort="red_issue_num" type="button">红色问题数<span class="sort-indicator"></span></button></th>
             <th><button class="sort-button numeric" data-sort="issue_num" type="button">问题总数<span class="sort-indicator"></span></button></th>
             <th><button class="sort-button" data-sort="create_time" type="button">创建时间<span class="sort-indicator"></span></button></th>
+            <th>操作</th>
           </tr></thead>
-          <tbody id="rows"><tr class="loading-row"><td colspan="7">正在加载任务列表...</td></tr></tbody>
+          <tbody id="rows"><tr class="loading-row"><td colspan="8">正在加载任务列表...</td></tr></tbody>
         </table>
       </div>
       <nav class="pagination" aria-label="任务列表分页">
@@ -62,6 +63,6 @@
       </nav>
     </section>
   </main>
-  <script src="/static/admin_tasks.js?v=20260721-style2" defer></script>
+  <script src="/static/admin_tasks.js?v=20260723-retry1" defer></script>
 </body>
 </html>

@@ -52,6 +52,32 @@ def test_scheduler_skips_completed_files_when_resuming(payload):
     assert code_file.issues[0].confidence == 0.91
 
 
+def test_task_automatically_retries_only_once(payload):
+    task = TaskSubmissionService().submit(TaskCreate.model_validate(payload))
+    task.version_code_path = f"{payload['version_code_path']}/missing"
+    task.save()
+    settings = Settings(
+        llm_mock_enabled=True,
+        scheduler_max_task_retries=1,
+        scheduler_retry_backoff_seconds=0,
+    )
+    scheduler = ReviewScheduler(settings)
+
+    first_claim = scheduler.claim_next_task()
+    first_failure = ReviewTaskService(settings, first_claim.lease_token).review_task(first_claim)
+    assert first_failure.state == State.FAILED.value
+    assert first_failure.retry_count == 1
+    assert first_failure.next_retry_time is not None
+
+    retry_claim = scheduler.claim_next_task()
+    assert retry_claim is not None
+    second_failure = ReviewTaskService(settings, retry_claim.lease_token).review_task(retry_claim)
+    assert second_failure.state == State.FAILED.value
+    assert second_failure.retry_count == 2
+    assert second_failure.next_retry_time is None
+    assert scheduler.claim_next_task() is None
+
+
 def test_llm_receives_only_four_polyspace_fields(payload):
     task = TaskSubmissionService().submit(TaskCreate.model_validate(payload))
     code_file = CodeFileModel.objects(task_id=str(task.id)).first()

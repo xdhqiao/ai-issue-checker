@@ -18,7 +18,8 @@ class Settings(BaseSettings):
 
     scheduler_interval_seconds: int = 5
     scheduler_lease_seconds: int = 180
-    scheduler_max_task_retries: int = 3
+    # Number of automatic retries after the initial failed attempt.
+    scheduler_max_task_retries: int = 1
     scheduler_retry_backoff_seconds: int = 30
     scheduler_shutdown_grace_seconds: int = 30
     file_concurrency: int = 4
@@ -72,4 +73,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

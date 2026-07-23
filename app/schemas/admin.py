@@ -21,6 +21,7 @@ class AdminTaskItem(BaseModel):
     issue_num: int
     create_time: datetime
     report_path: str
+    can_retry: bool
 
 
 class AdminTaskListResponse(BaseModel):

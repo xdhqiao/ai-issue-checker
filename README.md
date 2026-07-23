@@ -42,11 +42,11 @@ Completion → same admin + file-owner email recipient strategy as ci-ai-coderev
 ## 实现流程
 
 1. Client 调用 `POST /api/tasks`。若数据库中已有相同 `project_id + review_version`，先删除旧任务下全部 CodeFile，再删除旧 Task，随后完整写入新数据。
-2. 后台调度器轮询 pending、可重试 failed，以及租约已过期的 running 任务。领取使用带旧状态和旧租约条件的原子 `modify`，避免多个实例重复领取。
+2. 后台调度器轮询 pending、允许进行唯一一次自动重试的 failed，以及租约已过期的 running 任务。领取使用带旧状态和旧租约条件的原子 `modify`，避免多个实例重复领取；正常执行时心跳会持续续租。
 3. 一个任务内按 `FILE_CONCURRENCY` 并发处理文件。已完成文件直接跳过；中断或失败文件重新处理。
 4. 每个文件调用 LLM 多轮 function calling。传给 LLM 的 issue 输入对象严格只有 `check/function/line/detail` 四个字段。文件名、负责人、id、col、严重等级和 comment 不进入提示词。
 5. 模型通过源码工具取证，调用 `submit_confidences` 按输入顺序提交置信度，再调用 `task_done`。只有全部 issue 都有合法 `0~1` 置信度才建立文件完成检查点。
-6. 所有文件完成后聚合指标、完成任务并发邮件。若失败，在退避时间后重试未完成文件；部署中断时，任务租约过期后可恢复。
+6. 所有文件完成后聚合指标、完成任务并发邮件。若失败，在退避时间后最多自动重试一次未完成文件；再次失败后可在管理页面点击“继续确认”。部署中断时，任务租约过期后自动恢复。
 
 ## 目录结构
 
@@ -125,6 +125,7 @@ Content-Type: application/json
 其它接口：
 
 - `GET /api/tasks`、`GET /api/tasks/{task_id}`、`DELETE /api/tasks/{task_id}`
+- `POST /api/tasks/{task_id}/retry`：自动重试耗尽后手动继续确认未完成文件
 - `GET /api/admin/tasks`：筛选、排序、分页
 - `GET /api/admin/authors`：按日期统计负责人
 - `GET /api/admin/authors/{author}`：按日期、问题等级查看负责人相关项目版本明细
@@ -138,7 +139,8 @@ Content-Type: application/json
 
 - `FILE_CONCURRENCY`：单任务文件并发度。
 - `APP_HOST_PORT`：Docker 映射到宿主机的端口，默认 `8000`；端口冲突时可改为例如 `18080`。
-- `SCHEDULER_*`：轮询、租约、最大重试、退避和关闭等待。
+- `SCHEDULER_MAX_TASK_RETRIES`：初次失败后的自动重试次数，默认 `1`。
+- 其它 `SCHEDULER_*`：轮询、租约、退避和关闭等待。
 - `LLM_*`：OpenAI-compatible `/chat/completions` 地址、密钥、模型、重试、轮次和文件超时。
 - `LLM_MOCK_ENABLED=true`：不访问模型，所有 issue 写入中性测试置信度 `0.5`；生产必须设为 `false` 并配置 `LLM_URL`。
 - `CODE_REPOSITORY_ROOT`：允许读取的版本目录总根，生产建议必须配置。

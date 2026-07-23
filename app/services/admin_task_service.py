@@ -2,7 +2,9 @@ from datetime import datetime
 from math import ceil
 from urllib.parse import quote
 
+from app.common.constants import State
 from app.common.constants import state_label
+from app.core.config import get_settings
 from app.models.task import TaskModel
 from app.schemas.admin import AdminTaskItem, AdminTaskListResponse, AdminTaskSortField, SortOrder
 
@@ -37,6 +39,7 @@ class AdminTaskService:
         total = query.count()
         order = f"-{'create_time' if sort_by == 'create_time' else sort_by}" if sort_order == "desc" else sort_by
         tasks = query.order_by(order).skip((page - 1) * page_size).limit(page_size)
+        max_automatic_retries = max(0, get_settings().scheduler_max_task_retries)
         return AdminTaskListResponse(
             items=[
                 AdminTaskItem(
@@ -52,6 +55,11 @@ class AdminTaskService:
                     report_path=(
                         f"/reports/{quote(task.project_id, safe='')}/"
                         f"{quote(task.review_version, safe='')}.html"
+                    ),
+                    can_retry=(
+                        int(task.state or 0) == State.FAILED.value
+                        and int(task.retry_count or 0) > max_automatic_retries
+                        and task.next_retry_time is None
                     ),
                 )
                 for task in tasks

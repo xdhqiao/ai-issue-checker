@@ -119,7 +119,7 @@ class ReviewScheduler:
         lease_expired = not task.lease_token or task.lease_expires_at is None or self._at_or_before(task.lease_expires_at, now)
         if task.state in {State.PENDING.value, State.RUNNING.value}:
             return lease_expired
-        if task.state == State.FAILED.value and int(task.retry_count or 0) < max(1, self.settings.scheduler_max_task_retries):
+        if task.state == State.FAILED.value and int(task.retry_count or 0) <= max(0, self.settings.scheduler_max_task_retries):
             return lease_expired and (task.next_retry_time is None or self._at_or_before(task.next_retry_time, now))
         return False
 
@@ -143,4 +143,3 @@ class ReviewScheduler:
         if value.tzinfo is None:
             value = value.replace(tzinfo=timezone.utc)
         return value <= now
-

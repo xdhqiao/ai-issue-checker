@@ -88,3 +88,13 @@ def test_author_pages_are_available(client):
     openapi = client.get("/openapi.json").json()
     overview_parameters = openapi["paths"]["/api/admin/authors"]["get"]["parameters"]
     assert "severity" not in {parameter["name"] for parameter in overview_parameters}
+
+
+def test_admin_page_exposes_manual_retry_action(client):
+    page = client.get("/admin/tasks.html")
+    script = client.get("/static/admin_tasks.js?v=20260723-retry1")
+    assert page.status_code == 200
+    assert "操作" in page.text
+    assert "admin_tasks.js?v=20260723-retry1" in page.text
+    assert script.status_code == 200
+    assert "继续确认" in script.text

@@ -128,10 +128,11 @@ class ReviewTaskService:
             task.state = State.FAILED.value
             task.completion_status = "failed"
             task.retry_count = int(task.retry_count or 0) + 1
-            task.failure_message = f"{len(failed)} file(s) failed; scheduler will retry unfinished files"
-            if task.retry_count < max(1, self.settings.scheduler_max_task_retries):
+            if task.retry_count <= max(0, self.settings.scheduler_max_task_retries):
+                task.failure_message = f"{len(failed)} file(s) failed; one automatic retry is scheduled"
                 task.next_retry_time = utc_now() + timedelta(seconds=max(0, self.settings.scheduler_retry_backoff_seconds))
             else:
+                task.failure_message = f"{len(failed)} file(s) failed; automatic retry limit reached"
                 task.next_retry_time = None
         else:
             task.state = State.COMPLETED.value
@@ -173,7 +174,7 @@ class ReviewTaskService:
             raise LeaseLostError("task lease was replaced")
         retry_count = int(task.retry_count or 0) + 1
         next_retry_time = None
-        if retry_count < max(1, self.settings.scheduler_max_task_retries):
+        if retry_count <= max(0, self.settings.scheduler_max_task_retries):
             next_retry_time = utc_now() + timedelta(seconds=max(0, self.settings.scheduler_retry_backoff_seconds))
         persisted = query.modify(
             new=True,

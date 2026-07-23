@@ -5,6 +5,7 @@ from app.core.exceptions import NotFoundError
 from app.models.code_file import CodeFileModel
 from app.models.task import TaskModel
 from app.schemas.task import TaskCreate, TaskListResponse, TaskResponse
+from app.services.task_retry import TaskRetryService
 from app.services.task_submission import TaskSubmissionService
 
 
@@ -33,6 +34,11 @@ def get_task(task_id: str) -> TaskResponse:
     if task is None:
         raise NotFoundError("Task not found")
     return TaskResponse.from_model(task)
+
+
+@router.post("/api/tasks/{task_id}/retry", response_model=TaskResponse)
+def retry_task(task_id: str) -> TaskResponse:
+    return TaskResponse.from_model(TaskRetryService().retry_failed_task(task_id))
 
 
 @router.delete("/api/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
