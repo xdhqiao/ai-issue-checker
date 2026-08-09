@@ -77,3 +77,28 @@ class AuthorDetailResponse(BaseModel):
     page: int
     page_size: int
     total_pages: int
+
+
+class DashboardTrendPoint(BaseModel):
+    date: str
+    task_num: int
+    issue_num: int
+
+
+class DashboardResponse(BaseModel):
+    date_from: datetime | None
+    date_to: datetime | None
+    task_num: int
+    project_num: int
+    llm_total_tokens: int
+    llm_prompt_tokens: int
+    llm_completion_tokens: int
+    llm_elapsed_ms: int
+    file_num: int
+    reviewed_file_num: int
+    tool_call_num: int
+    model_round_num: int
+    issue_num: int
+    red_issue_num: int
+    red_issue_ratio: float
+    daily_trends: list[DashboardTrendPoint]

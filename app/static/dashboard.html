@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Polyspace Issue 数据看板</title>
+  <link rel="stylesheet" href="/static/dashboard.css?v=20260729-1">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div>
+        <p class="eyebrow">AI ISSUE CHECKER ANALYTICS</p>
+        <h1>Polyspace Issue 数据看板</h1>
+      </div>
+      <div class="topbar-actions">
+        <a class="topbar-link" href="/admin/tasks.html">任务管理</a>
+        <a class="topbar-link" href="/admin/authors.html">人员统计</a>
+        <span id="lastUpdated" class="updated-time">正在加载...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="filter-section" aria-labelledby="scopeTitle">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">TIME RANGE</p>
+          <h2 id="scopeTitle">统计范围</h2>
+        </div>
+        <div class="quick-ranges" aria-label="快捷日期范围">
+          <button class="quick-button" type="button" data-days="7">近 7 天</button>
+          <button class="quick-button active" type="button" data-days="30">近 30 天</button>
+          <button class="quick-button" type="button" data-days="all">全部</button>
+        </div>
+      </div>
+      <form id="filterForm" class="filter-form" autocomplete="off" data-form-type="other">
+        <label>
+          <span>开始日期</span>
+          <input id="dateFrom" name="dashboard_start_date" type="date" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-bwignore="true">
+        </label>
+        <label>
+          <span>结束日期</span>
+          <input id="dateTo" name="dashboard_end_date" type="date" autocomplete="off" data-lpignore="true" data-1p-ignore="true" data-bwignore="true">
+        </label>
+        <button id="queryButton" class="button-primary" type="submit">更新看板</button>
+      </form>
+      <p id="statusMessage" class="status-message" aria-live="polite"></p>
+    </section>
+
+    <section aria-labelledby="overviewTitle">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">OVERVIEW</p>
+          <h2 id="overviewTitle">核心规模</h2>
+        </div>
+        <p id="rangeDescription" class="section-note">统计最近 30 天创建的任务</p>
+      </div>
+      <div class="primary-metrics">
+        <article class="primary-card accent-card">
+          <span class="metric-label">任务总数</span>
+          <strong id="taskNum" class="metric-value">--</strong>
+          <span class="metric-footnote">按任务创建时间统计</span>
+        </article>
+        <article class="primary-card">
+          <span class="metric-label">项目总数</span>
+          <strong id="projectNum" class="metric-value">--</strong>
+          <span class="metric-footnote">project_id 去重</span>
+        </article>
+        <article class="primary-card">
+          <span class="metric-label">问题总数</span>
+          <strong id="issueNum" class="metric-value">--</strong>
+          <span class="metric-footnote">全部严重等级</span>
+        </article>
+        <article class="primary-card danger-card">
+          <span class="metric-label">红色问题占比</span>
+          <strong id="redIssueRatio" class="metric-value">--</strong>
+          <span id="redIssueCount" class="metric-footnote">红色问题 -- 个</span>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="progressTitle">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">REVIEW PROGRESS</p>
+          <h2 id="progressTitle">处理进度与问题构成</h2>
+        </div>
+      </div>
+      <div class="progress-layout">
+        <article class="progress-card">
+          <div class="progress-copy">
+            <span class="metric-label">文件审核进度</span>
+            <strong id="reviewProgress" class="progress-value">--</strong>
+            <span id="reviewedFilesText" class="metric-footnote">已审 -- / 总文件 --</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="文件审核进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="reviewProgressBar"></span>
+          </div>
+          <div class="split-metrics">
+            <div><strong id="fileNum">--</strong><span>总文件数</span></div>
+            <div><strong id="reviewedFileNum">--</strong><span>总已审文件数</span></div>
+          </div>
+        </article>
+        <article class="issue-composition-card">
+          <div id="redRatioRing" class="ratio-ring" style="--ratio:0">
+            <div><strong id="ringRatio">--</strong><span>红色占比</span></div>
+          </div>
+          <div class="composition-copy">
+            <span class="metric-label">问题构成</span>
+            <strong id="compositionIssueNum">--</strong>
+            <span>个问题进入 AI 二次确认</span>
+            <div class="legend-row"><i></i><span>红色问题</span><b id="compositionRedNum">--</b></div>
+            <div class="legend-row muted-legend"><i></i><span>其他问题</span><b id="otherIssueNum">--</b></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="llmTitle">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">LLM RESOURCE USAGE</p>
+          <h2 id="llmTitle">LLM 资源消耗</h2>
+        </div>
+        <p class="section-note">汇总所选时间范围内任务的模型调用数据</p>
+      </div>
+      <div class="resource-grid">
+        <article class="resource-card featured-resource">
+          <span class="resource-icon">Σ</span>
+          <span class="metric-label">总 Token 数</span>
+          <strong id="totalTokens">--</strong>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon input-icon">IN</span>
+          <span class="metric-label">总输入 Token</span>
+          <strong id="promptTokens">--</strong>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon output-icon">OUT</span>
+          <span class="metric-label">总输出 Token</span>
+          <strong id="completionTokens">--</strong>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon time-icon">T</span>
+          <span class="metric-label">LLM 总耗时</span>
+          <strong id="llmElapsed">--</strong>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon tool-icon">{ }</span>
+          <span class="metric-label">工具调用总次数</span>
+          <strong id="toolCallNum">--</strong>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon round-icon">R</span>
+          <span class="metric-label">总模型轮次</span>
+          <strong id="modelRoundNum">--</strong>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="trendTitle">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">DAILY TRENDS</p>
+          <h2 id="trendTitle">每日趋势</h2>
+        </div>
+        <p class="section-note">每日数据仅按照任务 create_time 归档（北京时间）</p>
+      </div>
+      <div class="chart-grid">
+        <article class="chart-card">
+          <div class="chart-heading">
+            <div><span class="chart-dot task-dot"></span><h3>每日任务量</h3></div>
+            <strong id="taskTrendTotal">--</strong>
+          </div>
+          <div id="taskChart" class="chart" aria-label="每日任务量趋势图"></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <div><span class="chart-dot issue-dot"></span><h3>每日问题数</h3></div>
+            <strong id="issueTrendTotal">--</strong>
+          </div>
+          <div id="issueChart" class="chart" aria-label="每日问题数趋势图"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/author_date_guard.js?v=20260722-3" defer></script>
+  <script src="/static/dashboard.js?v=20260729-1" defer></script>
+</body>
+</html>

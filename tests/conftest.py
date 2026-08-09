@@ -1,9 +1,11 @@
 import os
+import tempfile
 
 os.environ["APP_ENABLE_SCHEDULER"] = "false"
 os.environ["LLM_MOCK_ENABLED"] = "true"
 os.environ["MONGO_MOCK"] = "true"
 os.environ["MONGODB_DB"] = "ai_issue_checker_test"
+os.environ["CODE_REPOSITORY_ROOT"] = tempfile.gettempdir()
 
 import pytest
 from fastapi.testclient import TestClient
@@ -63,4 +65,3 @@ def payload(tmp_path):
             }
         ],
     }
-
